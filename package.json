@@ -1,0 +1,23 @@
+{
+  "name": "my-node",
+  "version": "1.0.0",
+  "description": "Node笔记",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qinjiu-tech/my-node.git"
+  },
+  "author": "qinjiu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qinjiu-tech/my-node/issues"
+  },
+  "homepage": "https://github.com/qinjiu-tech/my-node#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
