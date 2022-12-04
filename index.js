@@ -19,7 +19,7 @@ async function isExists(filePath) {
 
 async function test() {
   try {
-    const filePath = path.resolve(__dirname, "./mysql/d/f");
+    const filePath = path.resolve(__dirname, "./mysql/d");
     const exists = await isExists(filePath);
     if (exists) {
       throw new Error("文件已存在！");
