@@ -2,7 +2,7 @@
  * @Author: QinJiu
  * @Date: 2022-12-05 16:41:01
  * @LastEditors: Qinjiu
- * @LastEditTime: 2022-12-05 17:39:41
+ * @LastEditTime: 2022-12-07 11:52:27
  * @Description: -
  */
 const moment = require("moment");
@@ -21,12 +21,16 @@ const rs = fs.createReadStream(filePath, {
   highWaterMark: 3,
 });
 
+rs.on("open", () => {
+  console.log("文件被打开了");
+});
+
 rs.on("close", () => {
   console.log("可读流已关闭！");
 });
 
 rs.on("data", (chunk) => {
-  console.log("读取到的数据：", chunk);
+  console.log("读取到了一部分数据：", chunk);
   rs.pause();
   setTimeout(() => {
     rs.resume();
