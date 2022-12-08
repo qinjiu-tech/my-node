@@ -2,7 +2,7 @@
  * @Author: QinJiu
  * @Date: 2022-12-05 16:41:01
  * @LastEditors: Qinjiu
- * @LastEditTime: 2022-12-07 17:45:49
+ * @LastEditTime: 2022-12-08 16:59:03
  * @Description: -
  */
 const moment = require("moment");
@@ -20,7 +20,7 @@ const ws = fs.createWriteStream(filePath, {
   flags: "w",
   autoClose: true, // 调用end方法后自动关闭('error' || 'finish'后自动关闭)
   emitClose: true, // 流销毁后是否发出close事件
-  highWaterMark: 3, // 每次写入的最大字节
+  highWaterMark: 20, // 每次写入的最大字节
 });
 
 // 可写流事件
@@ -32,61 +32,44 @@ ws.on("close", () => {
   console.log("write：文件已关闭！");
 });
 
-ws.on("ready", () => {
-  console.log("write：实例可以使用了！");
-});
-
-// 可写流通道拥堵，恢复写入时触发
-ws.on("drain", () => {
-  console.log("write：恢复写入！");
-  write();
-});
-
-ws.on("finish", () => {
-  console.log("write：finish！");
-});
-
-ws.on("error", () => {
-  console.log("write：error！");
-});
-
-// 实例方法
-// 结束写入
-// ws.end(() => {
-//   console.log("write：写入已结束！")
-// })
-
-// for (let i = 1; i <= 10; i++) {
-//   const chunk = "aaa";
-//   // 下次写入是否需要等待（写入流管道已占满）
-//   const flag = ws.write(chunk, () => {
-//     console.log(`第${i}次写入`);
-//   });
-//   if (i === 10) {
-//     ws.end(() => {
-//       console.log("write：写入已结束！");
-//     });
+// 写入10M数据测试速度
+// function writeData() {
+//   console.time();
+//   let i = 1;
+//   while (i <= 100 * 1024) {
+//     ws.write("a");
+//     i++;
 //   }
+//   ws.end(() => {
+//     console.timeEnd();
+//   });
 // }
 
-let i = 0;
-// 一直写，直到到达上限，或无法再直接写入
-// 写入10M数据
-function write() {
-  let flag = true;
-  while (i < 10 && flag) {
-    flag = ws.write("a", () => {
-      if (i === 9) {
-        ws.end();
-      }
-    }); // 得到下一次还能不能直接写
-    console.log(i + 1);
-    if (!flag) {
-      console.log("通道已满！");
-      // ws.destroy();
+// writeData();
+
+// 写入10M数据测试速度
+function writeData() {
+  console.time();
+
+  let i = 0;
+  function write() {
+    let flag = true;
+    while (i < 10 * 1024 && flag) {
+      flag = ws.write("aaaaaaaaaa");
+      i += 10;
     }
-    i++;
   }
+
+  write();
+
+  // 解决背压问题
+  ws.on("drain", () => {
+    // console.log("write：恢复写入！");
+    write();
+    if (i >= 100 * 1024) {
+      console.timeEnd();
+    }
+  });
 }
 
-write();
+writeData();
