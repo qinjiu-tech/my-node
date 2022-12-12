@@ -2,7 +2,7 @@
  * @Author: QinJiu
  * @Date: 2022-12-05 16:41:01
  * @LastEditors: Qinjiu
- * @LastEditTime: 2022-12-08 16:59:03
+ * @LastEditTime: 2022-12-12 16:38:18
  * @Description: -
  */
 const moment = require("moment");
@@ -11,65 +11,78 @@ const fs = require("fs");
 
 const path = require("path");
 
-const filePath = path.resolve(__dirname, "./mysql/1.txt");
+// // 直接读取复制
+// async function copyFileMethod1() {
+//   console.time("方式1：");
 
-// 文件可写流
-const ws = fs.createWriteStream(filePath, {
-  encoding: "utf-8",
-  // w: 写入并覆盖    a: 追加
-  flags: "w",
-  autoClose: true, // 调用end方法后自动关闭('error' || 'finish'后自动关闭)
-  emitClose: true, // 流销毁后是否发出close事件
-  highWaterMark: 20, // 每次写入的最大字节
-});
+//   const from = path.resolve(__dirname, "./mysql/xmind.zip");
+//   const to = path.resolve(__dirname, "./mysql/xmind1.zip");
 
-// 可写流事件
-ws.on("open", () => {
-  console.log("write：文件已打开！");
-});
+//   const contents = await fs.promises.readFile(from);
 
-ws.on("close", () => {
-  console.log("write：文件已关闭！");
-});
+//   await fs.promises.writeFile(to, contents);
 
-// 写入10M数据测试速度
-// function writeData() {
-//   console.time();
-//   let i = 1;
-//   while (i <= 100 * 1024) {
-//     ws.write("a");
-//     i++;
-//   }
-//   ws.end(() => {
-//     console.timeEnd();
+//   console.timeEnd("方式1：");
+// }
+
+// copyFileMethod1();
+
+// // 手动解决背压
+// async function copyFileMethod2() {
+//   console.time("方式2：");
+
+//   const from = path.resolve(__dirname, "./mysql/xmind.zip");
+//   const to = path.resolve(__dirname, "./mysql/xmind2.zip");
+
+//   const rs = fs.createReadStream(from);
+//   const ws = fs.createWriteStream(to);
+
+//   let flag = true;
+//   rs.on("data", (chunk) => {
+//     flag = ws.write(chunk);
+//     if (!flag) {
+//       rs.pause();
+//     }
+//   });
+
+//   ws.on("drain", () => {
+//     rs.resume();
+//   });
+
+//   rs.on("end", () => {
+//     ws.end();
+//   });
+
+//   ws.on("close", () => {
+//     console.timeEnd("方式2：");
 //   });
 // }
 
-// writeData();
+// copyFileMethod2();
 
-// 写入10M数据测试速度
-function writeData() {
-  console.time();
+// pipe自动管理文件流
+async function copyFileMethod3() {
+  console.time("方式3：");
 
-  let i = 0;
-  function write() {
-    let flag = true;
-    while (i < 10 * 1024 && flag) {
-      flag = ws.write("aaaaaaaaaa");
-      i += 10;
-    }
-  }
+  const from = path.resolve(__dirname, "./mysql/xmind.zip");
+  const to = path.resolve(__dirname, "./mysql/xmind3.zip");
 
-  write();
+  const rs = fs.createReadStream(from);
+  const ws = fs.createWriteStream(to);
 
-  // 解决背压问题
-  ws.on("drain", () => {
-    // console.log("write：恢复写入！");
-    write();
-    if (i >= 100 * 1024) {
-      console.timeEnd();
-    }
+  rs.pipe(ws);
+
+  // rs.on("end", () => {
+  //   ws.end();
+  // });
+
+  // ws.on("finish", () => {
+  //   console.log("写入完成！")
+  // })
+
+  ws.on("close", () => {
+    console.timeEnd("方式3：");
   });
 }
 
-writeData();
+copyFileMethod3();
