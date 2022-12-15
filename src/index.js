@@ -2,37 +2,29 @@
  * @Author: QinJiu
  * @Date: 2022-12-12 16:47:12
  * @LastEditors: Qinjiu
- * @LastEditTime: 2022-12-13 17:25:04
+ * @LastEditTime: 2022-12-15 16:27:16
  * @Description: -
  */
-const net = require("net");
+const http = require("http");
 
-const server = net.createServer();
+const server = http.createServer(requestListener);
 
-const options = {
-  port: 9527,
-};
-server.listen(options, () => {
-  console.log("监听端口成功：", options?.port);
+const port = 9527;
+
+server.listen(port);
+
+server.on("listening", () => {
+  console.log(`server listen ${port}`);
 });
 
-server.on("connection", (socket) => {
-  console.log("有客户端连接到服务器：", socket.address());
+/**
+ * 请求侦听器
+ */
+function requestListener(req, res) {
+  requestHandler(req);
+  responseHandler(req, res);
+}
 
-  socket.on("data", (chunk) => {
-    console.log("接收到来自客户端的数据：", chunk.toString("utf-8"));
+function requestHandler() {}
 
-    const result = `HTTP/1.1 200 OK
-Content-Type: text/html
-
-<h1>你好啊</h1>`;
-
-    // socket.write(`你好啊`);
-    socket.write(result);
-    socket.end();
-  });
-
-  socket.on("close", () => {
-    console.log("连接关闭了");
-  });
-});
+function responseHandler() {}
