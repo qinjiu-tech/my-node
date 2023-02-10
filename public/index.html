@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>index</h1>
+    <button id="download-btn">下载</button>
+    <a
+      href="http://127.0.0.1:5008/api/file/download/2023.02.03工作总结.md"
+      download
+    >
+      a下载
+    </a>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const dowoloadBtn = document.querySelector("#download-btn");
+      dowoloadBtn.addEventListener("click", () => {
+        axios({
+          method: "get",
+          // url: "http://127.0.0.1:5008/api/file/download/2023.02.03工作总结.md",
+          url: "http://127.0.0.1:5008/api/file/download/1.png",
+        }).then((res) => {
+          console.log(res);
+        });
+      });
+    </script>
+  </body>
+</html>

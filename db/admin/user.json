@@ -1,0 +1,20 @@
+[
+    {
+        "id": "user_001",
+        "createTime": "2023-01-01 08:55",
+        "username": "admin",
+        "password": "123456Aa",
+        "name": "管理员1",
+        "role": "admin",
+        "phone": 13287298882
+    },
+    {
+        "id": "user_002",
+        "createTime": "2023-01-01 08:55",
+        "username": "001",
+        "password": "123456Aa",
+        "name": "普通用户1",
+        "role": "",
+        "phone": 13287298882
+    }
+]
